@@ -1,41 +1,38 @@
 language: bash
-
 sudo: required
-
 services:
-  - docker
-
+- docker
 env:
   DOCKER_COMPOSE_VERSION: 1.23.0-rc3
-
 before_install:
-  - docker-compose --version
-  - docker pull koalaman/shellcheck:v0.4.6
-  - docker pull lukasmartinelli/hadolint:latest
-  - curl -L https://github.com/docker/compose/releases/download/1.23.0-rc3/docker-compose-`uname -s`-`uname -m` -o docker-compose
-  - chmod +x docker-compose
-  - sudo mv docker-compose /usr/local/bin/
-  - docker-compose --version
-  - wget https://ftpmirror.gnu.org/parallel/parallel-20181022.tar.bz2
-  - bzip2 -dc parallel-20181022.tar.bz2 | tar xvf -
-  - (cd parallel-20181022 && ./configure && make && sudo make install && cd ../ && rm -rf parallel-20181022*)
-  - openssl aes-256-cbc -K $encrypted_0a6446eb3ae3_key -iv $encrypted_0a6446eb3ae3_iv -in k8s-bot.json.enc -out k8s-bot.json -d
-  - bash GOOGLE_APPLICATION_CREDENTIALS="./k8s-bot.json"
-  - bash ./tools/kubectl/install.sh
-  - bash ./tools/kubectl/configure.sh
-  - bash ./tools/helm/install.sh
-
+- openssl aes-256-cbc -K $encrypted_93959dd9faf0_key -iv $encrypted_93959dd9faf0_iv
+  -in k8s-bot.json.enc -out .secrets/k8s-bot.json -d
+- bash GOOGLE_APPLICATION_CREDENTIALS="./k8s-bot.json"
+- docker-compose --version
+- docker pull koalaman/shellcheck:v0.4.6
+- docker pull lukasmartinelli/hadolint:latest
+- curl -L https://github.com/docker/compose/releases/download/1.23.0-rc3/docker-compose-`uname
+  -s`-`uname -m` -o docker-compose
+- chmod +x docker-compose
+- sudo mv docker-compose /usr/local/bin/
+- docker-compose --version
+- wget https://ftpmirror.gnu.org/parallel/parallel-20181022.tar.bz2
+- bzip2 -dc parallel-20181022.tar.bz2 | tar xvf -
+- "(cd parallel-20181022 && ./configure && make && sudo make install && cd ../ &&
+  rm -rf parallel-20181022*)"
+- bash ./tools/kubectl/install.sh
+- bash ./tools/kubectl/configure.sh
+- bash ./tools/helm/install.sh
 before_script:
-  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin https://index.docker.io/v1 && DO_PUBLISH='y' TAG="$TRAVIS_COMMIT" bash ./tools/travis/build.sh
-  - bash ./tools/travis/lint.sh
-
+- echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin https://index.docker.io/v1
+  && DO_PUBLISH='y' TAG="$TRAVIS_COMMIT" bash ./tools/travis/build.sh
+- bash ./tools/travis/lint.sh
 script:
-  - bash ./tools/travis/analyse.sh
-  - bash ./tools/travis/unit-tests.sh
-
+- bash ./tools/travis/analyse.sh
+- bash ./tools/travis/unit-tests.sh
 deploy:
-  - provider: script
-    skip_cleanup: true
-    script: bash ./tools/travis/deploy/production.sh
-    on:
-      branch: master
+- provider: script
+  skip_cleanup: true
+  script: bash ./tools/travis/deploy/production.sh
+  on:
+    branch: master
