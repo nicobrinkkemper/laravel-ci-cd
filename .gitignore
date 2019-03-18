@@ -13,3 +13,5 @@ yarn-error.log
 /.secrets
 generate_apis.yaml
 account.json
+.terraform
+*.tfstate.backup
