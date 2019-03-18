@@ -93,17 +93,17 @@ $ gcloud iam service-accounts list
 
 > Put the keys in `.secrets`
 ```shell
-$ gcloud iam service-accounts keys create --iam-account ${DOCKER_BOT}@${PROJECT_NAME}.iam.gserviceaccount.com .secrets/${DOCKER_BOT}.json
+$ gcloud iam service-accounts keys create --iam-account ${K8S_BOT}@${PROJECT_NAME}.iam.gserviceaccount.com .secrets/${DOCKER_BOT}.json
 
 $ travis login --github-token $GITHUB_TOKEN
 $ travis encrypt-file .secrets/k8s-bot.json --add
 ```
 > Provide it with the appropriate rights
 ```
-gcloud projects add-iam-policy-binding ${PROJECT_NAME} --member serviceAccount:${DOCKER_BOT}@${PROJECT_NAME}.iam.gserviceaccount.com --role roles/storage.admin
+gcloud projects add-iam-policy-binding ${PROJECT_NAME} --member serviceAccount:${K8S_BOT}@${PROJECT_NAME}.iam.gserviceaccount.com --role roles/storage.admin
 
 
-gcloud projects add-iam-policy-binding ${PROJECT_NAME} --member serviceAccount:${DOCKER_BOT}@${PROJECT_NAME}.iam.gserviceaccount.com --role roles/viewer
+gcloud projects add-iam-policy-binding ${PROJECT_NAME} --member serviceAccount:${K8S_BOT}@${PROJECT_NAME}.iam.gserviceaccount.com --role roles/viewer
 
 ```
 
