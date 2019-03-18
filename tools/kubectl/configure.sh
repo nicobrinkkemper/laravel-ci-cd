@@ -2,7 +2,10 @@
 
 set -e
 
-kubectl config set-credentials admin/"$K8S_CLUSTER" --username="$K8S_USERNAME" --password="$K8S_PASSWORD" && \
-kubectl config set-cluster "$K8S_CLUSTER" --insecure-skip-tls-verify=true --server=$K8S_CLUSTER_API && \
-kubectl config set-context default/"$K8S_CLUSTER"/admin --user=admin/"$K8S_CLUSTER" --namespace=default --cluster="$K8S_CLUSTER" && \
-kubectl config use-context default/"$K8S_CLUSTER"/admin
+gcloud auth configure-docker
+gcloud config set project handlefy
+gcloud container clusters get-credentials $K8S_CLUSTER --zone $K8S_ZONE
+
+kubectl create clusterrolebinding cluster-admin-binding \
+  --clusterrole=cluster-admin \
+  --user=$(gcloud config get-value core/account);
