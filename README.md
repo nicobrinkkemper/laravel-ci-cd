@@ -24,7 +24,6 @@ $TAG | The current docker tag e.g. latest or v1.0.0 | string/null | null
 $DOCKER_BOT | A key for our pull and push bot e.g. docker-bot | string/null | null
 $K8S_BOT | A key for our pull and push bot e.g. k8s-bot | string/null | null
 $GITHUB_TOKEN | Personal Access Token used to access a private repository | string/null | null
-$DOCKER_EMAIL | The email address of your Docker (service-)account | string | null
 $DOCKER_PASSWORD | Docker (service-)account password to push and pull your image | string | null
 $DOCKER_REPO | The name of your Docker repository to be pushed to | string | null
 $DOCKER_USERNAME | The username of your Docker (service-)account to push and pull images | string  | null
@@ -103,7 +102,7 @@ $ gcloud config set project ${PROJECT_NAME}
 > Get credentials for cluster. See [CLUSTER.md](/cluster.md) for two ways to create a cluster.
 
 ```
-$ gcloud container clusters get-credentials "$K8S_CLUSTER" --zone "$K8S_ZONE"
+$ gcloud container clusters get-credentials $K8S_CLUSTER --zone $K8S_ZONE
 ```
 
 ## configure K8S Ingress to custom domain with HTTPS

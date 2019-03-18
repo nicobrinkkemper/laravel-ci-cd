@@ -48,7 +48,6 @@ $ travis logs --debug
 > Setup our env
 ```
 travis encrypt GITHUB_TOKEN=$GITHUB_TOKEN
-travis encrypt DOCKER_EMAIL=$DOCKER_EMAIL
 travis encrypt DOCKER_PASSWORD=$DOCKER_PASSWORD 
 travis encrypt DOCKER_REPO=$DOCKER_REPO 
 travis encrypt DOCKER_USERNAME=$DOCKER_USERNAME 
