@@ -60,6 +60,42 @@ EOM
 $ export $(grep -v '^#' ./.secrets/.env | xargs -d '\n')
 ```
 
+```shell
+$ gcloud auth configure-docker
+```
+
+```shell
+$ gcloud config set project ${PROJECT_NAME}
+```
+
+> Get credentials for cluster. See [CLUSTER.md](/cluster.md) for two ways to create a cluster.
+
+```
+$ gcloud container clusters get-credentials $K8S_CLUSTER --zone $K8S_ZONE
+```
+
+> Elevate core account
+
+```shell
+$ gcloud auth configure-docker
+$ kubectl create clusterrolebinding cluster-admin-binding \
+  --clusterrole=cluster-admin \
+  --user=$(gcloud config get-value core/account);
+```
+
+> Terraform serviceaccount
+```shell
+$ terraform init
+$ terraform plan
+$ terraform apply
+
+$ gcloud iam service-accounts keys create --iam-account travis-ci-worker@"$PROJECT_NAME".iam.gserviceaccount.com .secrets/account.json
+$ cp .secrets/account.json account.json
+$ travis login --github-token $GITHUB_TOKEN
+$ travis encrypt-file account.json --add
+$ rm account.json
+```
+
 > GET k8S username
 ```
 gcloud container clusters describe "$K8S_CLUSTER" --format json | jq -r '.masterAuth.username' | K8S_USERNAME=-
@@ -72,8 +108,8 @@ gcloud container clusters describe "$K8S_CLUSTER" --format json | jq -r '.master
 echo K8S_PASSWORD="$K8S_PASSWORD" >> .secrets/.env
 ```
 
+> Optional create service account
 ```
-gcloud container clusters get-credentials "$K8S_CLUSTER" --zone "$K8S_ZONE"
 kubectl create serviceaccount tiller --namespace kube-system
 kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller
 helm init --service-account tiller
@@ -81,31 +117,9 @@ helm init --service-account tiller
 kubectl get pods -n kube-system
 ```
 
-> Create two service-accounts
-```
-$ gcloud auth application-default login --no-launch-browser
+> Create service-accounts
 
-
-$ gcloud iam service-accounts create ${DOCKER_BOT} --display-name ${DOCKER_BOT}-for-ci-cd
-$ gcloud iam service-accounts list
-
-```
-
-> Put the keys in `.secrets`
-```shell
-$ gcloud iam service-accounts keys create --iam-account ${K8S_BOT}@${PROJECT_NAME}.iam.gserviceaccount.com .secrets/${DOCKER_BOT}.json
-
-$ travis login --github-token $GITHUB_TOKEN
-$ travis encrypt-file .secrets/k8s-bot.json --add
-```
-> Provide it with the appropriate rights
-```
-gcloud projects add-iam-policy-binding ${PROJECT_NAME} --member serviceAccount:${K8S_BOT}@${PROJECT_NAME}.iam.gserviceaccount.com --role roles/storage.admin
-
-
-gcloud projects add-iam-policy-binding ${PROJECT_NAME} --member serviceAccount:${K8S_BOT}@${PROJECT_NAME}.iam.gserviceaccount.com --role roles/viewer
-
-```
+You may also
 
 ## Deploy K8S cluster to GKE
 
@@ -267,4 +281,33 @@ $ echo $CERT_POD
 > Check logs
 ```shell
 $ kubectl exec -it -n $NAMESPACE $CERT_POD -- cat /var/log/managed_certificate_controller.log
+```
+
+
+
+
+## Service account alternative
+```
+$ gcloud auth application-default login --no-launch-browser
+
+
+$ gcloud iam service-accounts create ${DOCKER_BOT} --display-name ${DOCKER_BOT}-for-ci-cd
+$ gcloud iam service-accounts list
+
+```
+
+> Put the keys in `.secrets`
+```shell
+$ gcloud iam service-accounts keys create --iam-account ${K8S_BOT}@${PROJECT_NAME}.iam.gserviceaccount.com .secrets/${DOCKER_BOT}.json
+
+$ travis login --github-token $GITHUB_TOKEN
+$ travis encrypt-file .secrets/k8s-bot.json --add
+```
+> Provide it with the appropriate rights
+```
+gcloud projects add-iam-policy-binding ${PROJECT_NAME} --member serviceAccount:${K8S_BOT}@${PROJECT_NAME}.iam.gserviceaccount.com --role roles/storage.admin
+
+
+gcloud projects add-iam-policy-binding ${PROJECT_NAME} --member serviceAccount:${K8S_BOT}@${PROJECT_NAME}.iam.gserviceaccount.com --role roles/viewer
+
 ```
