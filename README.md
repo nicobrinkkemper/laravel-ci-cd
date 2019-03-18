@@ -94,6 +94,11 @@ $ cp .secrets/account.json account.json
 $ travis login --github-token $GITHUB_TOKEN
 $ travis encrypt-file account.json --add
 $ rm account.json
+
+PROJECT_NUMBER="$(gcloud projects describe \
+    $(gcloud config get-value core/project -q) --format='get(projectNumber)')"
+
+gcloud projects add-iam-policy-binding "$PROJECT_NUMBER" --member=travis-ci-worker@"$PROJECT_NAME".iam.gserviceaccount.com --role=roles/container.developer
 ```
 
 > GET k8S username
