@@ -12,3 +12,4 @@ yarn-error.log
 /.history
 /.secrets
 generate_apis.yaml
+account.json

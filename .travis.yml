@@ -4,14 +4,16 @@ services:
 - docker
 env:
   DOCKER_COMPOSE_VERSION: 1.23.0-rc3
-  GOOGLE_APPLICATION_CREDENTIALS: ./k8s-bot.json
+  GOOGLE_APPLICATION_CREDENTIALS: "./account.json"
 cache:
   directories:
-    - "$HOME/google-cloud-sdk/"
+  - "~/google-cloud-sdk/"
 before_install:
-- openssl aes-256-cbc -K $encrypted_93959dd9faf0_key -iv $encrypted_93959dd9faf0_iv -in k8s-bot.json.enc -out ./k8s-bot.json -d
+- openssl aes-256-cbc -K $encrypted_93959dd9faf0_key -iv $encrypted_93959dd9faf0_iv
+  -in account.json.enc -out account.json -d
 - gcloud version || true
-- if [ ! -d "$HOME/google-cloud-sdk/bin" ]; then rm -rf $HOME/google-cloud-sdk; export CLOUDSDK_CORE_DISABLE_PROMPTS=1; curl https://sdk.cloud.google.com | bash; fi
+- if [ ! -d "~/google-cloud-sdk/bin" ]; then rm -rf ~/google-cloud-sdk; export CLOUDSDK_CORE_DISABLE_PROMPTS=1;
+  curl https://sdk.cloud.google.com | bash; fi
 - source /home/travis/google-cloud-sdk/path.bash.inc
 - gcloud version
 - docker-compose --version
@@ -30,7 +32,8 @@ before_install:
 - bash ./tools/kubectl/configure.sh
 - bash ./tools/helm/install.sh
 before_script:
-- echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin https://index.docker.io/v1 && DO_PUBLISH='y' TAG="$TRAVIS_COMMIT" bash ./tools/travis/build.sh
+- echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin https://index.docker.io/v1
+  && DO_PUBLISH='y' TAG="$TRAVIS_COMMIT" bash ./tools/travis/build.sh
 - bash ./tools/travis/lint.sh
 script:
 - bash ./tools/travis/analyse.sh

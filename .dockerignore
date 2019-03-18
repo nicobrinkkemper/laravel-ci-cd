@@ -3,3 +3,4 @@
 /.secrets
 /.git
 .DS_Store
+account.json
