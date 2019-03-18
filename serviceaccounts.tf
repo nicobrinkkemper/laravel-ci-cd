@@ -104,6 +104,15 @@ resource "google_project_iam_custom_role" "worker" {
     "compute.zones.list",
     "container.clusters.get",
     "container.clusters.list",
+    "container.pods.attach",	
+    "container.pods.create",	
+    "container.pods.delete",	
+    "container.pods.evict",	
+    "container.pods.exec",	
+    "container.pods.get",	
+    "container.pods.getLogs",	
+    "container.pods.getStatus",	
+    "container.pods.list",	
   ]
 }
 
