@@ -19,7 +19,7 @@ convert_to_boolean_string_zero_is_true() {
   fi
 }
 source ./tools/docker/usr/local/share/env/20-arc-env;
-eval "echo \"$(cat ./tools/travis/deploy/env.yaml)\"" >> ./tools/travis/deploy/env_dist.yaml &&
+eval "echo \"$(cat ./tools/travis/deploy/env.yaml)\"" >> ./tools/travis/deploy/env_dist.yaml
 
 RELEASE_NAME="$(echo "${APP_NAME}-${TRAVIS_BRANCH}" | tr '[:upper:]' '[:lower:]')"
 export RELEASE_NAME
