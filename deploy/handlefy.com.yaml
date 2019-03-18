@@ -1,0 +1,26 @@
+apiVersion: networking.gke.io/v1beta1
+kind: ManagedCertificate
+metadata:
+  name: blog-tls
+  namespace: default
+spec:
+  domains:
+    - handlefy.com
+---
+apiVersion: networking.gke.io/v1beta1
+kind: ManagedCertificate
+metadata:
+  name: blog-blog-tls
+  namespace: default
+spec:
+  domains:
+    - blog.handlefy.com
+---
+apiVersion: networking.gke.io/v1beta1
+kind: ManagedCertificate
+metadata:
+  name: www-blog-tls
+  namespace: default
+spec:
+  domains:
+    - www.handlefy.com
