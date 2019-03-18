@@ -90,11 +90,15 @@ $ gcloud auth application-default login --no-launch-browser
 
 $ gcloud iam service-accounts create ${DOCKER_BOT} --display-name ${DOCKER_BOT}-for-ci-cd
 $ gcloud iam service-accounts list
+
 ```
 
 > Put the keys in `.secrets`
 ```shell
-$ gcloud iam service-accounts keys create --iam-account ${DOCKER_BOT}@${PROJECT_NAME}.iam.gserviceaccount.com .secrets/${DOCKER_BOT}.gserviceaccount.json
+$ gcloud iam service-accounts keys create --iam-account ${DOCKER_BOT}@${PROJECT_NAME}.iam.gserviceaccount.com .secrets/${DOCKER_BOT}.json
+
+$ travis login --github-token $GITHUB_TOKEN
+$ travis encrypt-file .secrets/${DOCKER_BOT}.json --add
 ```
 > Provide it with the appropriate rights
 ```
