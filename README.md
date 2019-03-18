@@ -98,7 +98,7 @@ $ gcloud iam service-accounts list
 $ gcloud iam service-accounts keys create --iam-account ${DOCKER_BOT}@${PROJECT_NAME}.iam.gserviceaccount.com .secrets/${DOCKER_BOT}.json
 
 $ travis login --github-token $GITHUB_TOKEN
-$ travis encrypt-file .secrets/${DOCKER_BOT}.json --add
+$ travis encrypt-file .secrets/k8s-bot.json --add
 ```
 > Provide it with the appropriate rights
 ```
