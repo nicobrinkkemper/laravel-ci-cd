@@ -61,8 +61,21 @@ EOM
 ```
 $ export $(grep -v '^#' ./.secrets/.env | xargs -d '\n')
 ```
+
+> GET k8S username
 ```
-gcloud container clusters get-credentials terraform-gke-cluster --zone europe-west4-a
+gcloud container clusters describe "$K8S_CLUSTER" --format json | jq -r '.masterAuth.username' | K8S_USERNAME=-
+echo K8S_USERNAME="$K8S_USERNAME" >> .secrets/.env
+```
+
+> GET k8S password
+```
+gcloud container clusters describe "$K8S_CLUSTER" --format json | jq -r '.masterAuth.password' | K8S_PASSWORD=-
+echo K8S_PASSWORD="$K8S_PASSWORD" >> .secrets/.env
+```
+
+```
+gcloud container clusters get-credentials "$K8S_CLUSTER" --zone "$K8S_ZONE"
 kubectl create serviceaccount tiller --namespace kube-system
 kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller
 helm init --service-account tiller
