@@ -61,7 +61,14 @@ EOM
 ```
 $ export $(grep -v '^#' ./.secrets/.env | xargs -d '\n')
 ```
-
+```
+gcloud container clusters get-credentials terraform-gke-cluster --zone europe-west4-a
+kubectl create serviceaccount tiller --namespace kube-system
+kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller
+helm init --service-account tiller
+# Check if tiller is running(kube-system being our default namespace)
+kubectl get pods -n kube-system
+```
 
 > Create two service-accounts
 ```
@@ -69,23 +76,19 @@ $ gcloud auth application-default login --no-launch-browser
 
 
 $ gcloud iam service-accounts create ${DOCKER_BOT} --display-name ${DOCKER_BOT}-for-ci-cd
-$ gcloud iam service-accounts create ${K8S_BOT} --display-name ${K8S_BOT}-for-ci-cd
 $ gcloud iam service-accounts list
 ```
 
 > Put the keys in `.secrets`
 ```shell
 $ gcloud iam service-accounts keys create --iam-account ${DOCKER_BOT}@${PROJECT_NAME}.iam.gserviceaccount.com .secrets/${DOCKER_BOT}.gserviceaccount.json
-$ gcloud iam service-accounts keys create --iam-account ${K8S_BOT}@${PROJECT_NAME}.iam.gserviceaccount.com .secrets/${K8S_BOT}.gserviceaccount.json
 ```
 > Provide it with the appropriate rights
 ```
 gcloud projects add-iam-policy-binding ${PROJECT_NAME} --member serviceAccount:${DOCKER_BOT}@${PROJECT_NAME}.iam.gserviceaccount.com --role roles/storage.admin
-gcloud projects add-iam-policy-binding ${PROJECT_NAME} --member serviceAccount:${K8S_BOT}@${PROJECT_NAME}.iam.gserviceaccount.com --role roles/storage.admin
 
 
 gcloud projects add-iam-policy-binding ${PROJECT_NAME} --member serviceAccount:${DOCKER_BOT}@${PROJECT_NAME}.iam.gserviceaccount.com --role roles/viewer
-gcloud projects add-iam-policy-binding ${PROJECT_NAME} --member serviceAccount:${K8S_BOT}@${PROJECT_NAME}.iam.gserviceaccount.com --role roles/viewer 
 
 ```
 
