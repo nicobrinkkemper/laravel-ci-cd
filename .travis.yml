@@ -24,7 +24,8 @@ before_install:
   - bash ./tools/helm/install.sh
 
 before_script:
-  - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD" && DO_PUBLISH='y' TAG="$TRAVIS_COMMIT" bash ./tools/travis/build.sh
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin https://index.docker.io/v1
+  - DO_PUBLISH='y' TAG="$TRAVIS_COMMIT" bash ./tools/travis/build.sh
   - bash ./tools/travis/lint.sh
 
 script:
