@@ -102,16 +102,8 @@ resource "google_project_iam_custom_role" "worker" {
     "compute.zones.get",
     "compute.zones.list",
     "compute.zones.list",
-    "container.apiServices.create",
-    "container.apiServices.delete",
-    "container.apiServices.get",
-    "container.apiServices.list",
-    "container.apiServices.update",
-    "container.apiServices.updateStatus",
-    "container.backendConfigs.create",
-    "container.backendConfigs.delete",
-    "container.backendConfigs.get",
-    "container.backendConfigs.list"
+    "container.clusters.get",
+    "container.clusters.list",
   ]
 }
 
@@ -163,6 +155,8 @@ resource "google_project_iam_custom_role" "cleanup" {
     "compute.zones.list",
     "storage.objects.create",
     "storage.objects.update",
+    "container.apiServices.delete",
+    "container.clusters.get"
   ]
 }
 
