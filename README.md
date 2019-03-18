@@ -52,8 +52,6 @@ K8s_NUM_NODES=3
 K8S_CLUSTER=laravel-cluster
 K8S_ZONE=europe-west4-a
 K8S_CLUSTER_API=https://example.com/swaggerapi/
-K8S_PASSWORD=$(pwgen 16 1 | tr -d '\n' | base64)
-K8S_USERNAME=k8s-bot
 EOM
 ```
 > Fill in this `.env` file then use it for the active bash session
