@@ -4,10 +4,10 @@ services:
 - docker
 env:
   DOCKER_COMPOSE_VERSION: 1.23.0-rc3
+  GOOGLE_APPLICATION_CREDENTIALS: ./k8s-bot.json
 before_install:
 - openssl aes-256-cbc -K $encrypted_93959dd9faf0_key -iv $encrypted_93959dd9faf0_iv
   -in k8s-bot.json.enc -out .secrets/k8s-bot.json -d
-- bash GOOGLE_APPLICATION_CREDENTIALS="./k8s-bot.json"
 - docker-compose --version
 - docker pull koalaman/shellcheck:v0.4.6
 - docker pull lukasmartinelli/hadolint:latest
