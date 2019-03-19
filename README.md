@@ -77,7 +77,6 @@ $ gcloud container clusters get-credentials $K8S_CLUSTER --zone $K8S_ZONE
 > Elevate core account
 
 ```shell
-$ gcloud auth configure-docker
 $ kubectl create clusterrolebinding cluster-admin-binding \
   --clusterrole=cluster-admin \
   --user=$(gcloud config get-value core/account);
@@ -111,12 +110,14 @@ gcloud container clusters describe "$K8S_CLUSTER" --format json | jq -r '.master
 echo K8S_PASSWORD="$K8S_PASSWORD" >> .secrets/.env
 ```
 
-> Optional create service account
+> Create tiller service account
+```shell
+$ kubectl create serviceaccount tiller --namespace kube-system
+$ kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller
+$ helm init --service-account tiller
 ```
-kubectl create serviceaccount tiller --namespace kube-system
-kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller
-helm init --service-account tiller
-# Check if tiller is running(kube-system being our default namespace)
+> Check if tiller is running (kube-system being our default namespace)
+```shell
 kubectl get pods -n kube-system
 ```
 

@@ -23,7 +23,8 @@ services:
           REDIS_PORT: 6379
           APP_USER_LOCAL: "true"
           MAIL_USERNAME: "noreply"
-          MAIL_PASSWORD: flwe2af32""
+          MAIL_PASSWORD: "flwe2af32"
+          APP_NAME: laravel
           APP_URL: https://apiv1.handlefy.com/
 
     database:
