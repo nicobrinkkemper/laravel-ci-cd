@@ -89,14 +89,8 @@ gcloud iam list-grantable-roles \
       //cloudresourcemanager.googleapis.com/projects/"$PROJECT_NAME" --filter="name:roles/container.*"
 ```
 
-> Terraform serviceaccount
+> Serviceaccount
 ```shell
-$ terraform init
-$ terraform plan
-$ terraform apply
-
-$ gcloud projects add-iam-policy-binding $PROJECT_NAME --member="serviceAccount:travis-ci-worker@$PROJECT_NAME.iam.gserviceaccount.com" --role=roles/container.developer
-
 $ gcloud iam service-accounts keys create --iam-account "travis-ci-worker@$PROJECT_NAME.iam.gserviceaccount.com" .secrets/account.json
 $ cp .secrets/account.json account.json
 $ travis login --github-token $GITHUB_TOKEN
@@ -206,7 +200,7 @@ kubectl get pod -n arc-master
 
 > Find Ingress pod
 ```shell
-$ INGRESS_POD=$(kubectl get pod -n arc-master -l protoPayload.request.metadata.name=web -o jsonpath="{.items[0].metadata.name}")
+$ INGRESS_POD=$(kubectl get pod -n arc-master -l helm.sh/chart=helm-chart-0.1.0 -o jsonpath="{.items[0].metadata.name}")
 $ echo $INGRESS_POD
 $ echo INGRESS_POD="$INGRESS_POD" >> .secrets/.env
 
