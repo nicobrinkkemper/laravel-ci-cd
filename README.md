@@ -83,22 +83,26 @@ $ kubectl create clusterrolebinding cluster-admin-binding \
   --user=$(gcloud config get-value core/account);
 ```
 
+> Verify there are grantable roles
+```
+gcloud iam list-grantable-roles \
+      //cloudresourcemanager.googleapis.com/projects/"$PROJECT_NAME" --filter="name:roles/container.*"
+```
+
 > Terraform serviceaccount
 ```shell
 $ terraform init
 $ terraform plan
 $ terraform apply
 
-$ gcloud iam service-accounts keys create --iam-account travis-ci-worker@"$PROJECT_NAME".iam.gserviceaccount.com .secrets/account.json
+$ gcloud projects add-iam-policy-binding $PROJECT_NAME --member="serviceAccount:travis-ci-worker@$PROJECT_NAME.iam.gserviceaccount.com" --role=roles/container.developer
+
+$ gcloud iam service-accounts keys create --iam-account "travis-ci-worker@$PROJECT_NAME.iam.gserviceaccount.com" .secrets/account.json
 $ cp .secrets/account.json account.json
 $ travis login --github-token $GITHUB_TOKEN
-$ travis encrypt-file account.json --add
+$ travis encrypt-file account.json # --add
 $ rm account.json
 
-PROJECT_NUMBER="$(gcloud projects describe \
-    $(gcloud config get-value core/project -q) --format='get(projectNumber)')"
-
-gcloud projects add-iam-policy-binding "$PROJECT_NUMBER" --member=travis-ci-worker@"$PROJECT_NAME".iam.gserviceaccount.com --role=roles/container.developer
 ```
 
 > GET k8S username
