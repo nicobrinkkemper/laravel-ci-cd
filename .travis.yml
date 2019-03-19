@@ -9,7 +9,8 @@ cache:
   directories:
   - "~/google-cloud-sdk/"
 before_install:
-- openssl aes-256-cbc -K $encrypted_93959dd9faf0_key -iv $encrypted_93959dd9faf0_iv -in account.json.enc -out account.json -d
+- openssl aes-256-cbc -K $encrypted_93959dd9faf0_key -iv $encrypted_93959dd9faf0_iv
+  -in account.json.enc -out account.json -d
 - gcloud version || true
 - if [ ! -d "~/google-cloud-sdk/bin" ]; then rm -rf ~/google-cloud-sdk; export CLOUDSDK_CORE_DISABLE_PROMPTS=1;
   curl https://sdk.cloud.google.com | bash; fi
