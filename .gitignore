@@ -15,3 +15,4 @@ generate_apis.yaml
 account.json
 .terraform
 *.tfstate.backup
+terraform.tfstate
