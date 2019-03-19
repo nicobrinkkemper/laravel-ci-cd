@@ -43,10 +43,12 @@ web:
 
   ingress:
     enabled: false
-    annotations: {}
+    annotations: {
+      kubernetes.io/ingress.global-static-ip-name: "handlefy-api-ip"
+    }
     paths: []
     hosts:
-      - chart-example.local
+      - apiv1.handlefy.com
     tls: []
 
   livenessProbe:

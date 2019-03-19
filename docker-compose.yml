@@ -24,7 +24,7 @@ services:
           APP_USER_LOCAL: "true"
           MAIL_USERNAME: "noreply"
           MAIL_PASSWORD: flwe2af32""
-          APP_URL: https://apiv1.handlefy.com
+          APP_URL: https://apiv1.handlefy.com/
 
     database:
         image: quay.io/continuouspipe/mysql5.7:stable
