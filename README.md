@@ -37,22 +37,21 @@ $K8S_USERNAME | The username of the Kubernetes service-account/user to access th
 $ cat > $PWD/.secrets/.env <<- EOM
 # Kubernetes app name
 APP_INSTANCE_NAME=laravel
-DOMAIN=example.com
+DOMAIN=your-domain.com
 SUB_DOMAIN=api
 REGION=europe
 PROJECT_NAME=your-google-project
 NAMESPACE=default
 # CI/CD
-DOCKER_USERNAME=nicobrinkkemper
+DOCKER_USERNAME=your-docker-username
 DOCKER_REPO=your-repo
+DOCKER_PASSWORD=your-docker-password
 TAG=latest
-GITHUB_TOKEN=your-token
-DOCKER_BOT=docker-bot
-K8s_BOT=k8s-bot
+GITHUB_TOKEN=your-github-token
 K8s_NUM_NODES=3
 K8S_CLUSTER=laravel-cluster
 K8S_ZONE=europe-west4-a
-K8S_CLUSTER_API=https://example.com/swaggerapi/
+K8S_CLUSTER_API=https://your-domain-or-ip.com/api/
 EOM
 ```
 > Fill in this `.env` file then use it for the active bash session
@@ -129,9 +128,33 @@ kubectl get pods -n kube-system
 
 > Create service-accounts
 
-You may also
+## Setup travis
+> Encrypt the following
+```
+travis encrypt GITHUB_TOKEN=$GITHUB_TOKEN
+travis encrypt DOCKER_PASSWORD=$DOCKER_PASSWORD 
+travis encrypt DOCKER_REPO=$DOCKER_REPO 
+travis encrypt DOCKER_USERNAME=$DOCKER_USERNAME 
+travis encrypt K8S_CLUSTER=$K8S_CLUSTER 
+travis encrypt K8S_CLUSTER_API=$K8S_CLUSTER_API 
+travis encrypt K8S_PASSWORD=$K8S_PASSWORD 
+travis encrypt K8S_USERNAME=$K8S_USERNAME
+travis encrypt K8S_ZONE=$K8S_ZONE
+```
 
-## Deploy K8S cluster to GKE
+## Deploying
+Assuming you have everything setup correct. Github user token, Travis login, etc. You can deploy by pushing.
+
+> Deploy to master
+```shell
+$ git checkout -b first-deploy
+$ git add .
+$ git commit -m 'first deploy'
+$ git push --set-upstream origin first-deploy
+```
+> Follow the link to do a pull request
+
+## Login in to GKE cluster
 
 ```shell
 $ gcloud auth configure-docker
@@ -147,10 +170,14 @@ $ gcloud config set project ${PROJECT_NAME}
 $ gcloud container clusters get-credentials $K8S_CLUSTER --zone $K8S_ZONE
 ```
 
-## configure K8S Ingress to custom domain with HTTPS
+## configure Ingress to custom domain with HTTPS
 [GKE-managed-certs](https://github.com/GoogleCloudPlatform/gke-managed-certs) can automatically generate `letsencrypt` certificates and renew them every three months. It only works on Google Kubernetes engine and it assumes you have DNS records setup and Google has verified your ownership over the domain. For this we will first change the generated external IP from ephemeral to static
 
-> Setup `gcloud` as shown above, then elevate core account
+> We need to be elevated, if you haven't already
+```
+
+$ gcloud auth activate-service-account travis-ci-worker@"$PROJECT_NAME".iam.gserviceaccount.com --key-file=./.secrets/account.json --project="$PROJECT_NAME"
+```
 
 ```shell
 $ kubectl create clusterrolebinding cluster-admin-binding \
@@ -165,24 +192,32 @@ gcloud compute addresses create ${APP_INSTANCE_NAME}-ip --global
 
 > Get static IP
 ```shell
-gcloud compute addresses describe ${APP_INSTANCE_NAME}-ip --global --format 'value(address)'
+STATIC_IP=`gcloud compute addresses describe ${APP_INSTANCE_NAME}-ip --global --format 'value(address)'`
+echo $STATIC_IP
+echo STATIC_IP="$STATIC_IP" >> .secrets/.env
 ```
 
 > Visit your domain provider account and edit your domain settings. E.g. create A-records with names **@**, **api** and **www**, with the static IP address set as data. Providers may not automatically append your domain. If so then you must enter names as api.example.com, www.example.com, etc. Follow instructions given by your domain provider.
 
-> Find Ingress pod
+> Verify pods are there
 ```shell
-$ export INGRESS_POD=$(kubectl get pod -l app=ingress -o jsonpath="{.items[0].metadata.name}")
+kubectl get pod -n arc-master
 ```
 
-> Verify it's there
+> Find Ingress pod
 ```shell
+$ INGRESS_POD=$(kubectl get pod -n arc-master -l protoPayload.request.metadata.name=web -o jsonpath="{.items[0].metadata.name}")
 $ echo $INGRESS_POD
+$ echo INGRESS_POD="$INGRESS_POD" >> .secrets/.env
+
+SERVICE_IP=$(kubectl get ingress $INGRESS_POD \
+        --namespace $NAMESPACE \
+        --output jsonpath='{.status.loadBalancer.ingress[0].ip}')
 ```
 
 > Annotate Ingress with static ip
 ```shell
-$ kubectl annotate ingress -n ${NAMESPACE} ${INGRESS_POD} kubernetes.io/ingress.global-static-ip-name=${APP_INSTANCE_NAME}-ip
+$ kubectl annotate ingress -n arc-master $INGRESS_POD kubernetes.io/ingress.global-static-ip-name=${APP_INSTANCE_NAME}-ip
 ```
 
 
@@ -308,10 +343,10 @@ $ gcloud iam service-accounts list
 
 > Put the keys in `.secrets`
 ```shell
-$ gcloud iam service-accounts keys create --iam-account ${K8S_BOT}@${PROJECT_NAME}.iam.gserviceaccount.com .secrets/${DOCKER_BOT}.json
+$ gcloud iam service-accounts keys create --iam-account ${K8S_BOT}@${PROJECT_NAME}.iam.gserviceaccount.com account.json
 
 $ travis login --github-token $GITHUB_TOKEN
-$ travis encrypt-file .secrets/k8s-bot.json --add
+$ travis encrypt-file account.json --add
 ```
 > Provide it with the appropriate rights
 ```
