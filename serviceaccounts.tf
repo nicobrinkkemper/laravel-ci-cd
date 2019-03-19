@@ -3,7 +3,15 @@ variable project { }
 provider "google" {
   project = "${var.project}"
 }
+data "google_iam_policy" "worker" {
+  binding {
+    role = "roles/container.developer"
 
+    members = [
+      "${google_service_account.worker.email}",
+    ]
+  }
+}
 resource "google_service_account" "worker" {
   account_id   = "travis-ci-worker"
   display_name = "Travis CI Workers"
