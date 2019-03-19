@@ -51,7 +51,7 @@ export APP_ENV=${APP_ENV:-local}
 export APP_KEY=${APP_KEY:-base64:rpDVB589rMWrRUVkcviIAOfnrQo/MOdfWdjOd3t+K5A=}
 export APP_DEBUG=${APP_DEBUG:-true}
 export LOG_CHANNEL=${LOG_CHANNEL:-stack}
-export APP_URL=${APP_URL:-https://arc.test}
+export APP_URL=${APP_URL:-https://apiv1.handlefy.com}
 
 export DB_CONNECTION=${DB_CONNECTION:-mysql}
 export DB_HOST=${DB_HOST:-database}
