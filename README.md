@@ -1,4 +1,4 @@
-# laravel-ci-cd
+# laravel
 [![Build Status](https://travis-ci.org/nicobrinkkemper/laravel-ci-cd.svg?branch=master)](https://travis-ci.org/nicobrinkkemper/laravel-ci-cd)
 
 ## In this repo
